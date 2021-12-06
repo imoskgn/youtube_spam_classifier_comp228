@@ -3,6 +3,7 @@ from nltk.corpus import stopwords
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.feature_extraction.text import TfidfTransformer
 from sklearn.naive_bayes import MultinomialNB
+from sklearn.metrics import confusion_matrix, accuracy_score, classification_report
 import string
 import os
 
@@ -60,6 +61,20 @@ test_data = concat_data[263::]
 
 # 8. Fitting the model
 classifier = MultinomialNB().fit(train_data.iloc[:, 0:1219], train_data.iloc[:, 1219])
+
+# 9. Crossvalidate TODO
+
+# 10. Testing the model
+predictions = classifier.predict(test_data.iloc[:, 0:1219])
+
+# Confussion Matrix
+conf_matrix = confusion_matrix(predictions, test_data.iloc[:, 1219])
+print("Confusion Matrix: ")
+print(conf_matrix)
+
+# Accuracy score
+print("Accuracy Score: " + str(accuracy_score(test_data.iloc[:, 1219], predictions)))
+print(classification_report(test_data.iloc[:, 1219], predictions))
 
 input_data = pd.Series([
     'nice video',
