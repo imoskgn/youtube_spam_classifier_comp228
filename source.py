@@ -43,9 +43,10 @@ tfidf = TfidfTransformer()
 train_tfidf = tfidf.fit_transform(train_tc)
 print("Tf-Idf Shape= ", train_tfidf.shape)
 
-### Trying Pandas Sample
+### Converting tfidf to pandas DF to shuffle and split it
 df_train_tfidf = pd.DataFrame()
 df_train_tfidf = pd.concat([df_train_tfidf, pd.DataFrame(train_tfidf.todense())], axis=1)
+df_train_tfidf.columns = count_vectorizer.get_feature_names_out()
 
 train_data = pd.DataFrame()
 test_data = pd.DataFrame()
@@ -54,11 +55,11 @@ concat_data = pd.concat([df_train_tfidf, data.CLASS], axis=1)
 # Shuffling the data
 concat_data = concat_data.sample(frac=1)
 ## Splitting data
-train_data = concat_data[1:263]
+train_data = concat_data[0:263]
 test_data = concat_data[263::]
 
-
-classifier = MultinomialNB().fit(train_data.iloc[:, 0:1219], train_data.iloc[:,1219])
+# 8. Fitting the model
+classifier = MultinomialNB().fit(train_data.iloc[:, 0:1219], train_data.iloc[:, 1219])
 
 input_data = pd.Series([
     'nice video',
