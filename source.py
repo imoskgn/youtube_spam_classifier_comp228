@@ -1,12 +1,15 @@
-import pandas
 import pandas as pd
 from nltk.corpus import stopwords
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.feature_extraction.text import TfidfTransformer
 from sklearn.naive_bayes import MultinomialNB
 import string
-
 import os
+
+def train_test_dataset_splitter():
+    print("Haga algo mano")
+
+
 # 1. Load the data
 path = "/Users/oskgn/Downloads"
 filename = 'Youtube01-Psy.csv'
@@ -44,8 +47,10 @@ train_tfidf = tfidf.fit_transform(train_tc)
 print("Tf-Idf Shape= ", train_tfidf.shape)
 
 ### Trying Pandas Sample
-df_train_tfidf = pandas.DataFrame()
+df_train_tfidf = pd.DataFrame()
 df_train_tfidf = pd.concat([df_train_tfidf, pd.DataFrame(train_tfidf.todense())], axis=1)
+
+## Splitting data
 
 classifier = MultinomialNB().fit(df_train_tfidf, data.CLASS)
 
