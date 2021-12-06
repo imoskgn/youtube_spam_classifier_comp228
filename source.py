@@ -91,7 +91,9 @@ input_data = pd.Series([
     'please visit my website',
     'well done Tom, I wish I could do it too',
     'you have WON a PRIZE, click to see',
-    'Hello Jimmy, you explained everything very well'])
+    'Hello Jimmy, you explained everything very well',
+    'I have some questions, hope you can answer them'
+])
 
 # Transform input data using count vectorizer
 input_tc = count_vectorizer.transform(input_data)
