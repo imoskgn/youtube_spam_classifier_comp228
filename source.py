@@ -2,6 +2,7 @@ import pandas as pd
 from nltk.corpus import stopwords
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.feature_extraction.text import TfidfTransformer
+from sklearn.model_selection import cross_val_score
 from sklearn.naive_bayes import MultinomialNB
 from sklearn.metrics import confusion_matrix, accuracy_score, classification_report
 import string
@@ -9,11 +10,10 @@ import os
 
 
 # 1. Load the data
-path = "/Users/oskgn/Downloads"
+path = "../"
 filename = 'Youtube01-Psy.csv'
 fullpath = os.path.join(path, filename)
 data = pd.read_csv(fullpath)
-
 # 2. Data exploration
 print("Head: \n", data.head(3))
 print("\nData types: \n", data.dtypes)
@@ -60,9 +60,19 @@ train_data = concat_data[0:263]
 test_data = concat_data[263::]
 
 # 8. Fitting the model
-classifier = MultinomialNB().fit(train_data.iloc[:, 0:1219], train_data.iloc[:, 1219])
+classifier = MultinomialNB()
+classifier.fit(train_data.iloc[:, 0:1219], train_data.iloc[:, 1219])
 
-# 9. Crossvalidate TODO
+# 9. Crossvalidate
+folds = 5
+scores = accuracy_values = cross_val_score(
+    classifier,
+    concat_data.iloc[:, 0:1219],
+    concat_data.iloc[:, 1219],
+    scoring='accuracy',
+    cv=folds
+)
+print(scores.mean())
 
 # 10. Testing the model
 predictions = classifier.predict(test_data.iloc[:, 0:1219])
