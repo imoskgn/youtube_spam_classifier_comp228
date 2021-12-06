@@ -1,3 +1,5 @@
+import math
+
 import pandas as pd
 from nltk.corpus import stopwords
 from sklearn.feature_extraction.text import CountVectorizer
@@ -10,7 +12,7 @@ import os
 
 
 # 1. Load the data
-path = "../"
+path = r"C:\Users\oskgn\OneDrive - Centennial College\CentennialCollege\4_Introduction_To_AI_COMP237\Labs\NLP_Group1"
 filename = 'Youtube01-Psy.csv'
 fullpath = os.path.join(path, filename)
 data = pd.read_csv(fullpath)
@@ -47,44 +49,46 @@ print("Tf-Idf Shape= ", train_tfidf.shape)
 ### Converting tfidf to pandas DF to shuffle and split it
 df_train_tfidf = pd.DataFrame()
 df_train_tfidf = pd.concat([df_train_tfidf, pd.DataFrame(train_tfidf.todense())], axis=1)
-df_train_tfidf.columns = count_vectorizer.get_feature_names_out()
+# df_train_tfidf.columns = count_vectorizer.get_feature_names_out()
 
 train_data = pd.DataFrame()
 test_data = pd.DataFrame()
 # Concatenating data + classification, last column is the Classification
+feature_columns = df_train_tfidf.shape[1]
 concat_data = pd.concat([df_train_tfidf, data.CLASS], axis=1)
 # Shuffling the data
 concat_data = concat_data.sample(frac=1)
 ## Splitting data
-train_data = concat_data[0:263]
-test_data = concat_data[263::]
+train_perc = math.ceil(concat_data.shape[0]*.75,)
+train_data = concat_data[0:train_perc]
+test_data = concat_data[train_perc::]
 
 # 8. Fitting the model
 classifier = MultinomialNB()
-classifier.fit(train_data.iloc[:, 0:1219], train_data.iloc[:, 1219])
+classifier.fit(train_data.iloc[:, 0:train_data.shape[1]-1], train_data.iloc[:, train_data.shape[1]-1])
 
 # 9. Crossvalidate
 folds = 5
 scores = accuracy_values = cross_val_score(
     classifier,
-    concat_data.iloc[:, 0:1219],
-    concat_data.iloc[:, 1219],
+    concat_data.iloc[:, 0:feature_columns],
+    concat_data.iloc[:, feature_columns],
     scoring='accuracy',
     cv=folds
 )
 print(scores.mean())
 
 # 10. Testing the model
-predictions = classifier.predict(test_data.iloc[:, 0:1219])
+predictions = classifier.predict(test_data.iloc[:, 0:feature_columns])
 
 # Confussion Matrix
-conf_matrix = confusion_matrix(predictions, test_data.iloc[:, 1219])
+conf_matrix = confusion_matrix(predictions, test_data.iloc[:, feature_columns])
 print("Confusion Matrix: ")
 print(conf_matrix)
 
 # Accuracy score
-print("Accuracy Score: " + str(accuracy_score(test_data.iloc[:, 1219], predictions)))
-print(classification_report(test_data.iloc[:, 1219], predictions))
+print("Accuracy Score: " + str(accuracy_score(test_data.iloc[:, feature_columns], predictions)))
+print(classification_report(test_data.iloc[:, feature_columns], predictions))
 
 input_data = pd.Series([
     'nice video',
@@ -104,4 +108,7 @@ input_tfidf = tfidf.transform(input_tc)
 type(input_tfidf)
 print(input_tfidf)
 
-predictions = classifier.predict(input_tfidf)
+predictions_group = classifier.predict(input_tfidf);
+result = pd.concat([input_data, pd.DataFrame(predictions_group)], axis=1)
+result.columns = ["Comment", "Spam"]
+print(result)
