@@ -44,12 +44,10 @@ train_tfidf = tfidf.fit_transform(train_tc)
 print("Tf-Idf Shape= ", train_tfidf.shape)
 
 ### Trying Pandas Sample
-df = pandas.DataFrame()
-X = train_tfidf
-X1 = pd.DataFrame(X.todense(), columns=count_vectorizer.get_feature_names_out())
-df = pd.concat([df, X1], axis=1)
+df_train_tfidf = pandas.DataFrame()
+df_train_tfidf = pd.concat([df_train_tfidf, pd.DataFrame(train_tfidf.todense())], axis=1)
 
-classifier = MultinomialNB().fit(X1, data.CLASS)
+classifier = MultinomialNB().fit(df_train_tfidf, data.CLASS)
 
 input_data = pd.Series([
     'nice video',
@@ -72,4 +70,4 @@ X2 = input_tfidf
 X3 = pd.DataFrame(X2.todense())
 df1 = pd.concat([df1, X3], axis=1)
 
-predictions = classifier.predict(input_tfidf)
+predictions = classifier.predict(df1)
