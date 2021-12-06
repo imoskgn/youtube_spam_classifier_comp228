@@ -65,9 +65,4 @@ input_tfidf = tfidf.transform(input_tc)
 type(input_tfidf)
 print(input_tfidf)
 
-df1 = pandas.DataFrame()
-X2 = input_tfidf
-X3 = pd.DataFrame(X2.todense())
-df1 = pd.concat([df1, X3], axis=1)
-
-predictions = classifier.predict(df1)
+predictions = classifier.predict(input_tfidf)
