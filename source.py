@@ -6,9 +6,6 @@ from sklearn.naive_bayes import MultinomialNB
 import string
 import os
 
-def train_test_dataset_splitter():
-    print("Haga algo mano")
-
 
 # 1. Load the data
 path = "/Users/oskgn/Downloads"
@@ -50,9 +47,18 @@ print("Tf-Idf Shape= ", train_tfidf.shape)
 df_train_tfidf = pd.DataFrame()
 df_train_tfidf = pd.concat([df_train_tfidf, pd.DataFrame(train_tfidf.todense())], axis=1)
 
+train_data = pd.DataFrame()
+test_data = pd.DataFrame()
+# Concatenating data + classification, last column is the Classification
+concat_data = pd.concat([df_train_tfidf, data.CLASS], axis=1)
+# Shuffling the data
+concat_data = concat_data.sample(frac=1)
 ## Splitting data
+train_data = concat_data[1:263]
+test_data = concat_data[263::]
 
-classifier = MultinomialNB().fit(df_train_tfidf, data.CLASS)
+
+classifier = MultinomialNB().fit(train_data.iloc[:, 0:1219], train_data.iloc[:,1219])
 
 input_data = pd.Series([
     'nice video',
